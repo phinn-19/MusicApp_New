@@ -1,0 +1,231 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.Group?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.shape.*?>
+
+<BorderPane fx:id="mainRoot"
+            xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.musicapp.ui.MainController"
+            prefWidth="1360"
+            prefHeight="840"
+            styleClass="root">
+    <top>
+        <HBox styleClass="header-bar" alignment="CENTER_LEFT" spacing="18">
+            <Button text="☰" styleClass="btn-burger top-action-btn" onAction="#onToggleSidebar" focusTraversable="false"/>
+            <Label text="♪ MusicApp" styleClass="logo-label"/>
+            <Region HBox.hgrow="ALWAYS"/>
+
+            <HBox alignment="CENTER_RIGHT" spacing="16" styleClass="header-actions">
+                <Button text="📊 Stats" styleClass="btn-burger top-action-btn" onAction="#onShowLibraryStats" focusTraversable="false"/>
+                <Button fx:id="miniPlayerBtn" text="▣ Mini" styleClass="btn-burger top-action-btn" onAction="#onToggleMiniPlayer" focusTraversable="false"/>
+                <Button fx:id="immersiveModeBtn" text="◎ Đắm chìm" styleClass="btn-burger top-action-btn" onAction="#onToggleImmersiveMode" focusTraversable="false"/>
+
+                <HBox styleClass="search-shell compact-search-shell" alignment="CENTER" spacing="0">
+                    <TextField fx:id="searchField" promptText="Tìm kiếm Local" prefWidth="190" styleClass="search-field compact-search-field" onAction="#onSearch"/>
+                    <Button text="🔍 Local" styleClass="btn-search compact-search-btn" onAction="#onSearch" focusTraversable="false"/>
+                </HBox>
+
+                <HBox styleClass="search-shell compact-search-shell" alignment="CENTER" spacing="0">
+                    <TextField fx:id="internetSearchField" promptText="Tìm kiếm Internet (API)" prefWidth="220" styleClass="search-field compact-search-field" onAction="#onSearchInternet"/>
+                    <Button text="▶ YouTube" styleClass="btn-search compact-search-btn" onAction="#onSearchInternet" focusTraversable="false"/>
+                </HBox>
+
+                <Button text="📜 Lời" styleClass="btn-burger top-action-btn" onAction="#onToggleLyrics" focusTraversable="false"/>
+                <Button fx:id="themeToggleBtn" text="🌙" styleClass="btn-burger top-action-btn" onAction="#onToggleTheme" focusTraversable="false"/>
+            </HBox>
+        </HBox>
+    </top>
+
+    <center>
+        <HBox>
+            <VBox fx:id="sidebar" prefWidth="360" minWidth="360" maxWidth="360" styleClass="sidebar-pane" spacing="0">
+                <HBox spacing="0" style="-fx-padding: 12 12 0 12;">
+                    <Button fx:id="tabSongsBtn" text="Bài hát" styleClass="btn-tab-active" maxWidth="Infinity" HBox.hgrow="ALWAYS" onAction="#onTabSongs"/>
+                    <Button fx:id="tabPlaylistsBtn" text="Playlist" styleClass="btn-tab-inactive" maxWidth="Infinity" HBox.hgrow="ALWAYS" onAction="#onTabPlaylists"/>
+                </HBox>
+
+                <VBox fx:id="panelSongs" VBox.vgrow="ALWAYS" spacing="0">
+                    <HBox alignment="CENTER_LEFT" spacing="6" style="-fx-padding: 12 12 8 12;">
+                        <Label text="TẤT CẢ BÀI HÁT" styleClass="section-label"/>
+                        <HBox HBox.hgrow="ALWAYS"/>
+                        <Button text="+" styleClass="btn-icon-add" onAction="#onAddSong"/>
+                        <Button text="✎" styleClass="btn-icon-add" onAction="#onEditSong"/>
+                        <Button text="📁" styleClass="btn-icon-add" onAction="#onBulkImportFolder"/>
+                        <Button text="↻" styleClass="btn-icon-add" onAction="#onRefreshMetadata"/>
+                        <Button text="✕" styleClass="btn-icon-del" onAction="#onDeleteSong"/>
+                    </HBox>
+
+                    <VBox spacing="8" style="-fx-padding: 0 12 8 12;">
+                        <Label text="SẮP XẾP / LỌC" styleClass="section-label"/>
+                        <HBox spacing="8">
+                            <ComboBox fx:id="sortComboBox" promptText="Mới thêm" styleClass="add-pl-combo" HBox.hgrow="ALWAYS"/>
+                            <ComboBox fx:id="filterComboBox" promptText="Tất cả" styleClass="add-pl-combo" HBox.hgrow="ALWAYS"/>
+                        </HBox>
+                    </VBox>
+
+                    <ListView fx:id="songListView" VBox.vgrow="ALWAYS" styleClass="song-list-view"/>
+
+                    <VBox styleClass="add-pl-bar" spacing="8">
+                        <Label text="THÊM VÀO PLAYLIST / QUEUE" styleClass="section-label"/>
+                        <HBox spacing="8" alignment="CENTER">
+                            <ComboBox fx:id="playlistComboBox" promptText="Chọn playlist..." styleClass="add-pl-combo" HBox.hgrow="ALWAYS"/>
+                            <Button text="→" styleClass="btn-add-to-pl" onAction="#onAddSongToPlaylist"/>
+                            <Button text="Q+" styleClass="btn-add-to-pl" onAction="#onAddToQueue"/>
+                        </HBox>
+                    </VBox>
+                </VBox>
+
+                <VBox fx:id="panelPlaylists" visible="false" managed="false" spacing="0" VBox.vgrow="ALWAYS">
+                    <HBox alignment="CENTER_LEFT" spacing="6" style="-fx-padding: 12 12 8 12;">
+                        <Label text="PLAYLISTS" styleClass="section-label"/>
+                        <HBox HBox.hgrow="ALWAYS"/>
+                        <Button text="+" styleClass="btn-icon-add" onAction="#onAddPlaylist"/>
+                        <Button text="✎" styleClass="btn-icon-add" onAction="#onRenamePlaylist"/>
+                        <Button text="✕" styleClass="btn-icon-del" onAction="#onDeletePlaylist"/>
+                    </HBox>
+
+                    <ListView fx:id="playlistListView" prefHeight="180" styleClass="playlist-list-view"/>
+
+                    <HBox alignment="CENTER_LEFT" spacing="6" style="-fx-padding: 12 12 8 12;">
+                        <Label text="BÀI TRONG PLAYLIST" styleClass="section-label"/>
+                        <HBox HBox.hgrow="ALWAYS"/>
+                        <Button text="↑" styleClass="btn-icon-add" onAction="#onMovePlaylistSongUp"/>
+                        <Button text="↓" styleClass="btn-icon-add" onAction="#onMovePlaylistSongDown"/>
+                        <Button text="✕" styleClass="btn-icon-del" onAction="#onRemoveSongFromPlaylist"/>
+                    </HBox>
+
+                    <ListView fx:id="playlistSongsView" VBox.vgrow="ALWAYS" styleClass="playlist-list-view"/>
+                </VBox>
+            </VBox>
+
+            <StackPane HBox.hgrow="ALWAYS">
+                <VBox fx:id="playerView" styleClass="main-area" alignment="CENTER" spacing="16" maxWidth="Infinity">
+                    <StackPane fx:id="squareArtBox" prefWidth="260" prefHeight="260" maxWidth="260" maxHeight="260" styleClass="cover-frame">
+                        <Rectangle width="260" height="260" arcWidth="28" arcHeight="28" styleClass="cover-shadow"/>
+                        <ImageView fx:id="squareAlbumArt" fitWidth="260" fitHeight="260" preserveRatio="false" pickOnBounds="true"/>
+                        <Label fx:id="squareArtLabel" text="♪" styleClass="cover-placeholder"/>
+                    </StackPane>
+
+                    <StackPane fx:id="vinylPane" prefWidth="420" prefHeight="420" maxWidth="420" maxHeight="420" visible="false" managed="false">
+                        <Circle radius="200" styleClass="vinyl-shadow"/>
+                        <Circle fx:id="vinylDisc" radius="194" styleClass="vinyl-disc"/>
+                        <Circle radius="185" styleClass="vinyl-ring-1"/>
+                        <Circle radius="173" styleClass="vinyl-ring-2"/>
+                        <Circle radius="161" styleClass="vinyl-ring-2"/>
+                        <Circle radius="149" styleClass="vinyl-ring-3"/>
+                        <Circle radius="137" styleClass="vinyl-ring-3"/>
+                        <Circle radius="125" styleClass="vinyl-ring-3"/>
+                        <Circle radius="113" styleClass="vinyl-ring-3"/>
+                        <Circle radius="101" styleClass="vinyl-ring-3"/>
+                        <Circle radius="89" styleClass="vinyl-ring-3"/>
+                        <Circle fx:id="albumArtCircle" radius="58" styleClass="album-art-circle"/>
+                        <Label fx:id="albumArtLabel" text="♪" styleClass="album-art-label"/>
+                        <Circle radius="7" styleClass="vinyl-center"/>
+                        <Group>
+                            <Circle centerX="116" centerY="-144" radius="9" styleClass="tonearm-head"/>
+                            <Line startX="116" startY="-144" endX="20" endY="-16" styleClass="tonearm-line"/>
+                            <Rectangle x="14" y="-24" width="12" height="18" arcWidth="4" arcHeight="4" styleClass="tonearm-cartridge"/>
+                        </Group>
+                    </StackPane>
+
+                    <VBox alignment="CENTER" spacing="5" maxWidth="460">
+                        <Label fx:id="nowPlayingTitle" text="Chưa chọn bài" styleClass="np-title" wrapText="true" alignment="CENTER" maxWidth="420"/>
+                        <Label fx:id="nowPlayingArtist" text="—" styleClass="np-artist"/>
+                        <Label fx:id="nowPlayingAlbum" text="" styleClass="np-album"/>
+                    </VBox>
+
+                    <VBox spacing="6" maxWidth="560" prefWidth="560">
+                        <HBox>
+                            <Label fx:id="currentTimeLabel" text="0:00" styleClass="time-label"/>
+                            <HBox HBox.hgrow="ALWAYS"/>
+                            <Label fx:id="totalTimeLabel" text="0:00" styleClass="time-label"/>
+                        </HBox>
+                        <Slider fx:id="progressSlider" min="0" max="100" value="0" maxWidth="Infinity" styleClass="slider"/>
+                    </VBox>
+
+                    <HBox alignment="CENTER" spacing="22">
+                        <Button fx:id="shuffleBtn" text="⇄" styleClass="btn-ghost" onAction="#onToggleShuffle"/>
+                        <Button text="⏮" styleClass="btn-prev-next" onAction="#onPrev"/>
+                        <Button fx:id="playPauseBtn" text="▶" styleClass="btn-play" onAction="#onPlayPause"/>
+                        <Button text="⏭" styleClass="btn-prev-next" onAction="#onNext"/>
+                        <Button fx:id="repeatBtn" text="↺" styleClass="btn-ghost" onAction="#onToggleRepeat"/>
+                        <Button fx:id="favoriteBtn" text="♡" styleClass="btn-ghost" onAction="#onToggleFavorite"/>
+                    </HBox>
+
+                    <HBox alignment="CENTER" spacing="10" maxWidth="320" prefWidth="320">
+                        <Label text="🔈" styleClass="time-label"/>
+                        <Slider fx:id="volumeSlider" min="0" max="100" value="70" HBox.hgrow="ALWAYS" styleClass="slider"/>
+                        <Label text="🔊" styleClass="time-label"/>
+                    </HBox>
+
+                    <HBox alignment="CENTER" spacing="8" maxWidth="620" prefWidth="620">
+                        <Button text="↻ Metadata" onAction="#onRefreshMetadata" styleClass="btn-search"/>
+                    </HBox>
+
+                    <HBox spacing="14" maxWidth="960" prefWidth="960" alignment="TOP_CENTER">
+                        <VBox spacing="8" prefWidth="460" styleClass="info-card">
+                            <HBox alignment="CENTER_LEFT" spacing="8">
+                                <Label fx:id="queueCountLabel" text="Queue: 0 bài" styleClass="section-label"/>
+                                <HBox HBox.hgrow="ALWAYS"/>
+                                <Button text="Q+" styleClass="btn-add-to-pl" onAction="#onAddToQueue"/>
+                                <Button text="Xóa chọn" styleClass="btn-back" onAction="#onRemoveFromQueue"/>
+                                <Button text="Clear" styleClass="btn-back" onAction="#onClearQueue"/>
+                            </HBox>
+                            <ListView fx:id="queueListView" prefHeight="170" styleClass="playlist-list-view"/>
+                        </VBox>
+
+                        <VBox spacing="8" prefWidth="460" styleClass="info-card">
+                            <Label fx:id="recommendationTitleLabel" text="Đề xuất gần giống" styleClass="section-label"/>
+                            <ListView fx:id="recommendationListView" prefHeight="170" styleClass="playlist-list-view"/>
+                        </VBox>
+                    </HBox>
+                </VBox>
+
+                <VBox fx:id="searchView" styleClass="search-results-pane" spacing="16" visible="false" managed="false">
+                    <HBox alignment="CENTER_LEFT" spacing="12">
+                        <Button text="← Quay lại" styleClass="btn-back" onAction="#onBackToPlayer"/>
+                        <Label fx:id="searchResultTitle" text="Kết quả tìm kiếm" styleClass="search-result-title"/>
+                    </HBox>
+                    <Label fx:id="searchResultCount" text="" styleClass="search-result-subtitle"/>
+                    <ListView fx:id="searchResultView" VBox.vgrow="ALWAYS" styleClass="search-result-list"/>
+                    <HBox spacing="10" alignment="CENTER_LEFT">
+                        <Label text="Thêm bài đã chọn vào:" styleClass="section-label"/>
+                        <ComboBox fx:id="searchPlaylistCombo" promptText="Chọn playlist..." styleClass="add-pl-combo" prefWidth="180"/>
+                        <Button text="→" styleClass="btn-add-to-pl" onAction="#onAddSearchResultToPlaylist"/>
+                        <Button text="Q+" styleClass="btn-add-to-pl" onAction="#onAddToQueue"/>
+                    </HBox>
+                </VBox>
+            </StackPane>
+
+            <VBox fx:id="lyricsSidebar" prefWidth="300" minWidth="300" maxWidth="300" spacing="0" styleClass="lyrics-sidebar">
+                <HBox alignment="CENTER_LEFT" spacing="8" styleClass="lyrics-header">
+                    <Label text="Lời bài hát" styleClass="lyrics-header-label"/>
+                </HBox>
+
+                <VBox alignment="CENTER" spacing="2" style="-fx-padding: 10 14 6 14;">
+                    <Label fx:id="lyricsSongTitle" text="Chưa chọn bài" styleClass="lyrics-song-title" alignment="CENTER" maxWidth="260"/>
+                    <Label fx:id="lyricsArtistName" text="" styleClass="lyrics-artist-name"/>
+                </VBox>
+
+                <HBox style="-fx-padding: 0 14 8 14;" spacing="6">
+                    <Button fx:id="infoTabBtn" text="Thông tin" onAction="#onShowSongInfo" maxWidth="Infinity" HBox.hgrow="ALWAYS" styleClass="lyrics-tab-active"/>
+                    <Button fx:id="lyricsTabBtn" text="Lời bài hát" onAction="#onShowSongLyrics" maxWidth="Infinity" HBox.hgrow="ALWAYS" styleClass="lyrics-edit-btn"/>
+                    <Button text="💾" onAction="#onSaveLyricsInline" styleClass="lyrics-edit-btn"/>
+                    <Button text="🗑" onAction="#onClearLyrics" styleClass="lyrics-delete-btn"/>
+                </HBox>
+
+                <TextArea fx:id="lyricsArea" VBox.vgrow="ALWAYS" promptText="Thông tin bài hát sẽ hiện ở đây..." wrapText="true" editable="false" styleClass="lyrics-area"/>
+            </VBox>
+        </HBox>
+    </center>
+
+    <bottom>
+        <HBox styleClass="status-bar">
+            <Label fx:id="statusLabel" text="Sẵn sàng" styleClass="status-label"/>
+        </HBox>
+    </bottom>
+</BorderPane>
